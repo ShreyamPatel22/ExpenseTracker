@@ -71,7 +71,70 @@ namespace ExpenseTracker.Cli
         //TODO: Implement AddExpense, ListExpenses, AddCategory, ListCategories methods
         private static void AddExpense(ExpenseService service)
         {
-            Console.WriteLine("TODO: AddExpense not implemented yet.");
+            Console.Clear();
+            Console.WriteLine("==== Add Expense ====");
+
+            // Amount
+            decimal amount;
+            while (true)
+            {
+                Console.Write("Amount: ");
+                var amountInput = Console.ReadLine();
+
+                if (decimal.TryParse(amountInput, out amount) && amount > 0)
+                {
+                    break;
+                }
+
+                Console.WriteLine("Amount must be a positive number. Try again.");
+            }
+            // Date
+            Console.Write("Date (leave blank for today, or enter e.g. 2025-11-24):");
+            var dateInput = Console.ReadLine();
+            DateOnly date;
+
+            if (string.IsNullOrWhiteSpace(dateInput))
+            {
+                date = DateOnly.FromDateTime(DateTime.Today);
+            }
+
+            else if (!DateOnly.TryParse(dateInput, out date))
+            {
+                Console.WriteLine("Invalid date. Using today.");
+                date = DateOnly.FromDateTime(DateTime.Today);
+            }
+
+            // Category
+            string categoryName;
+            while (true)
+            {
+                Console.Write("Category name: ");
+                categoryName = Console.ReadLine() ?? "";
+
+                if (!string.IsNullOrWhiteSpace(categoryName))
+                {
+                    break;
+                }
+                Console.WriteLine("Category name cannot be empty. Try again.");
+            }
+
+            // Note
+            Console.Write("Note: ");
+            var note = Console.ReadLine() ?? "";
+
+            try
+            {
+                service.AddExpenseAsync(amount, date, categoryName, note).GetAwaiter().GetResult();
+                Console.WriteLine();
+                Console.WriteLine("Expense saved successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            Console.WriteLine();
             Console.WriteLine("Press Enter to go back to menu.");
             Console.ReadLine();
         }
