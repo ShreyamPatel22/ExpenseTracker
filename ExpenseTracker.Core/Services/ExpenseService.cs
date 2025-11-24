@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using ExpenseTracker.Core.Models;
 using ExpenseTracker.Core.Repositories;
@@ -60,5 +61,18 @@ public sealed class ExpenseService
             .Where(t => (!from.HasValue || t.Date >= from) &&
                         (!to.HasValue || t.Date <= to))
             .Sum(t => t.Amount);
+    }
+
+    public async Task AddCategoryAsync(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Category name is required", nameof(name));
+
+        await _catRepo.EnsureAsync(name.Trim(), CategoryType.Expense);
+    }
+
+    public Task<IReadOnlyList<Category>> GetCategoriesAsync()
+    {
+        return _catRepo.GetAllAsync();
     }
 }
