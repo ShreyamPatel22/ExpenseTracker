@@ -9,10 +9,10 @@ public sealed class ExpenseService
     private readonly ITransactionRepository _txRepo;
     private readonly ICategoryRepository _catRepo;
 
-    public ExpenseService(ITransactionRepository txRepo, ICategoryRepository catRepo)
+    public ExpenseService(ICategoryRepository catRepo, ITransactionRepository txRepo)
     {
-        _txRepo = txRepo;
         _catRepo = catRepo;
+        _txRepo = txRepo;
     }
 
     public async Task AddExpenseAsync(decimal amount, DateOnly date, string categoryName, string note = "")
