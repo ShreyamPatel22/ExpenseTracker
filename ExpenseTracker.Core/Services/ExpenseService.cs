@@ -75,4 +75,15 @@ public sealed class ExpenseService
     {
         return _catRepo.GetAllAsync();
     }
+
+    public async Task<IReadOnlyList<Transaction>> GetExpensesAsync(DateOnly? from = null, DateOnly? to = null)
+    {
+        var all = await _txRepo.GetAllAsync();
+        return all
+            .Where(t => t.Type == TransactionType.Expense)
+            .Where(t => (!from.HasValue || t.Date >= from) &&
+                        (!to.HasValue || t.Date <= to))
+            .OrderByDescending(t => t.Date)
+            .ToList();
+    }
 }

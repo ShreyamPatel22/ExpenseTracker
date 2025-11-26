@@ -141,7 +141,25 @@ namespace ExpenseTracker.Cli
 
         private static void ListExpenses(ExpenseService service)
         {
-            Console.WriteLine("TODO: ListExpenses not implemented yet.");
+            Console.Clear();
+            Console.WriteLine("==== List Expenses ====");
+            Console.WriteLine();
+
+            var expenses = service.GetExpensesAsync().GetAwaiter().GetResult();
+
+            if (!expenses.Any())
+            {
+                Console.WriteLine("No expenses found.");
+
+            }
+            else
+            {
+                foreach (var e in expenses)
+                {
+                    Console.WriteLine($"{e.Date}: ${e.Amount} - {e.Note}");
+                }
+            }
+            Console.WriteLine();
             Console.WriteLine("Press Enter to go back to menu.");
             Console.ReadLine();
         }
