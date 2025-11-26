@@ -39,6 +39,7 @@ namespace ExpenseTracker.Cli
                 Console.WriteLine("2) List Expenses");
                 Console.WriteLine("3) Add Category");
                 Console.WriteLine("4) List Categories");
+                Console.WriteLine("5) Totals By Category");
                 Console.WriteLine("0) Exit");
                 Console.Write("Select an option: ");
 
@@ -57,6 +58,9 @@ namespace ExpenseTracker.Cli
                         break;
                     case "4":
                         ListCategories(service);
+                        break;
+                    case "5":
+                        ShowTotalsByCategory(service);
                         break;
                     case "0":
                         return;
@@ -221,20 +225,44 @@ namespace ExpenseTracker.Cli
             Console.ReadLine();
         }
 
+        private static void ShowTotalsByCategory(ExpenseService service)
+        {
+            Console.Clear();
+            Console.WriteLine("==== Totals By Category ====");
+            Console.WriteLine();
 
+            var totals = service.TotalsByCategoryAsync().GetAwaiter().GetResult();
 
-        // private static void AddCategory(ExpenseService service)
-        // {
-        //     Console.WriteLine("TODO: AddCategory not implemented yet.");
-        //     Console.WriteLine("Press Enter to go back to menu.");
-        //     Console.ReadLine();
-        // }
-
-        // private static void ListCategories(ExpenseService service)
-        // {
-        //     Console.WriteLine("TODO: ListCategories not implemented yet.");
-        //     Console.WriteLine("Press Enter to go back to menu.");
-        //     Console.ReadLine();
-        // }
+            if (!totals.Any())
+            {
+                Console.WriteLine("No expenses found.");
+            }
+            else
+            {
+                foreach (var pair in totals.OrderBy(p => p.Key))
+                {
+                    Console.WriteLine($"{pair.Key}: ${pair.Value}");
+                }
+            }
+            Console.WriteLine();
+            Console.WriteLine("Press Enter to go back to menu.");
+            Console.ReadLine();
+        }
     }
+
+
+    // private static void AddCategory(ExpenseService service)
+    // {
+    //     Console.WriteLine("TODO: AddCategory not implemented yet.");
+    //     Console.WriteLine("Press Enter to go back to menu.");
+    //     Console.ReadLine();
+    // }
+
+    // private static void ListCategories(ExpenseService service)
+    // {
+    //     Console.WriteLine("TODO: ListCategories not implemented yet.");
+    //     Console.WriteLine("Press Enter to go back to menu.");
+    //     Console.ReadLine();
+    // }
 }
+
