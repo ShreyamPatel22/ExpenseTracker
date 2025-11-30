@@ -86,4 +86,37 @@ public sealed class ExpenseService
             .OrderByDescending(t => t.Date)
             .ToList();
     }
+
+    public IEnumerable<Transaction> GetExpensesByDateRange(DateOnly start, DateOnly end)
+    {
+        return _txRepo.GetByDateRange(start, end);
+    }
+    public IEnumerable<Transaction> GetExpensesForToday()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        return GetExpensesByDateRange(today, today);
+    }
+
+    public IEnumerable<Transaction> GetExpensesForThisWeek()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        // Monday as start of the week
+        int diff = (int)today.DayOfWeek - (int)DayOfWeek.Monday;
+        if (diff < 0) diff += 7;
+
+        var weekStart = today.AddDays(-diff);
+        var weekEnd = weekStart.AddDays(6);
+
+        return GetExpensesByDateRange(weekStart, weekEnd);
+    }
+
+    public IEnumerable<Transaction> GetExpensesForThisMonth()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var monthStart = new DateOnly(today.Year, today.Month, 1);
+        var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+        return GetExpensesByDateRange(monthStart, monthEnd);
+    }
 }

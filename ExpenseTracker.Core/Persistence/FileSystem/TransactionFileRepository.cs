@@ -33,4 +33,12 @@ public sealed class TransactionFileRepository : ITransactionRepository
     {
         return FileStore.SaveAsync(_file, _cache);
     }
+
+    public IEnumerable<Transaction> GetByDateRange(DateOnly start, DateOnly end)
+    {
+        return _cache
+            .Where(t => t.Date >= start && t.Date <= end)
+            .OrderBy(t => t.Date)
+            .ToList();
+    }
 }

@@ -2,10 +2,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+//using System.Transactions;
+using ExpenseTracker.Core.Models;
 using ExpenseTracker.Core;
 using ExpenseTracker.Core.Persistence.FileSystem;
 using ExpenseTracker.Core.Repositories;
 using ExpenseTracker.Core.Services;
+using System.Collections.Generic;
 
 namespace ExpenseTracker.Cli
 {
@@ -40,6 +43,7 @@ namespace ExpenseTracker.Cli
                 Console.WriteLine("3) Add Category");
                 Console.WriteLine("4) List Categories");
                 Console.WriteLine("5) Totals By Category");
+                Console.WriteLine("6) Filter expenses by date");
                 Console.WriteLine("0) Exit");
                 Console.Write("Select an option: ");
 
@@ -61,6 +65,9 @@ namespace ExpenseTracker.Cli
                         break;
                     case "5":
                         ShowTotalsByCategory(service);
+                        break;
+                    case "6":
+                        FilterExpensesByDate(service);
                         break;
                     case "0":
                         return;
@@ -248,21 +255,104 @@ namespace ExpenseTracker.Cli
             Console.WriteLine("Press Enter to go back to menu.");
             Console.ReadLine();
         }
+
+        private static void FilterExpensesByDate(ExpenseService service)
+        {
+            Console.WriteLine();
+            Console.WriteLine("==== Filter Expenses By Date ====");
+            Console.WriteLine("1. Today");
+            Console.WriteLine("2. This Week");
+            Console.WriteLine("3. This Month");
+            Console.WriteLine("4. Custom Range");
+            Console.Write("Select an option: ");
+
+            var choice = Console.ReadLine();
+            IEnumerable<Transaction> results;
+
+            switch (choice)
+            {
+                case "1":
+                    results = service.GetExpensesForToday();
+                    break;
+                case "2":
+                    results = service.GetExpensesForThisWeek();
+                    break;
+                case "3":
+                    results = service.GetExpensesForThisMonth();
+                    break;
+                case "4":
+                    var (start, end) = PromptForDateRange();
+                    results = service.GetExpensesByDateRange(start, end);
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Press Enter to go back to menu.");
+                    Console.ReadLine();
+                    return;
+            }
+            Console.WriteLine("\nFiltered expenses:\n");
+            PrintTransactions(results);
+        }
+
+        // Helper to prompt for custom date range
+        private static (DateOnly start, DateOnly end) PromptForDateRange()
+        {
+            while (true)
+            {
+                Console.Write("Start date (YYYY-MM-DD):");
+                var startInput = Console.ReadLine();
+
+                Console.Write("End date (YYYY-MM-DD):");
+                var endInput = Console.ReadLine();
+
+                if (!DateOnly.TryParse(startInput, out var start) ||
+                    !DateOnly.TryParse(endInput, out var end))
+                {
+                    Console.WriteLine("Invalid dates. Try again.\n");
+                    continue;
+                }
+                if (end < start)
+                {
+                    Console.WriteLine("End date must be after start date.\n");
+                    continue;
+                }
+                return (start, end);
+            }
+        }
+
+        private static void PrintTransactions(IEnumerable<Transaction> transactions)
+        {
+            if (!transactions.Any())
+            {
+                Console.WriteLine("No expenses found.");
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to go back to menu.");
+                Console.ReadLine();
+                return;
+            }
+
+            foreach (var e in transactions.OrderBy(e => e.Date))
+            {
+                Console.WriteLine($"{e.Date}: ${e.Amount} - {e.Note}");
+            }
+            Console.WriteLine();
+            Console.WriteLine("Press Enter to go back to menu.");
+            Console.ReadLine();
+        }
     }
-
-
-    // private static void AddCategory(ExpenseService service)
-    // {
-    //     Console.WriteLine("TODO: AddCategory not implemented yet.");
-    //     Console.WriteLine("Press Enter to go back to menu.");
-    //     Console.ReadLine();
-    // }
-
-    // private static void ListCategories(ExpenseService service)
-    // {
-    //     Console.WriteLine("TODO: ListCategories not implemented yet.");
-    //     Console.WriteLine("Press Enter to go back to menu.");
-    //     Console.ReadLine();
-    // }
 }
+
+
+// private static void AddCategory(ExpenseService service)
+// {
+//     Console.WriteLine("TODO: AddCategory not implemented yet.");
+//     Console.WriteLine("Press Enter to go back to menu.");
+//     Console.ReadLine();
+// }
+
+// private static void ListCategories(ExpenseService service)
+// {
+//     Console.WriteLine("TODO: ListCategories not implemented yet.");
+//     Console.WriteLine("Press Enter to go back to menu.");
+//     Console.ReadLine();
+// }
 
