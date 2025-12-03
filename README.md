@@ -18,7 +18,7 @@ ExpenseTracker is a lightweight command-line tool that allows users to:
   - Custom Date Range  
 - Persist all data using JSON files  
 
-Architecture:
+### Architecture:
 CLI -> Services -> Repositories -> JSON File Storage
 
 ### Requirements
@@ -47,7 +47,7 @@ transactions.json
 categories.json
 
 
-Main Menu
+### Main Menu
 1) Add Expense
 2) List Expenses
 3) Add Category
