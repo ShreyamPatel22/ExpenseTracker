@@ -47,7 +47,7 @@ Files created:
 transactions.json
 categories.json
 
-
+```
 ### Main Menu
 1) Add Expense
 2) List Expenses
@@ -56,6 +56,7 @@ categories.json
 5) Totals By Category
 6) Filter expenses by date
 0) Exit
+```
 
 1) Example Output
 Filtered expenses example:
