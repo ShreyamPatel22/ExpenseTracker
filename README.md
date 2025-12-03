@@ -47,8 +47,8 @@ Files created:
 transactions.json
 categories.json
 
-```
 ### Main Menu
+```
 1) Add Expense
 2) List Expenses
 3) Add Category
