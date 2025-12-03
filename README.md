@@ -29,6 +29,7 @@ CLI -> Services -> Repositories -> JSON File Storage
 Clone the repository:
 
 git clone https://github.com/ShreyamPatel22/ExpenseTracker.git
+
 cd ExpenseTracker
 
 Build the project:
